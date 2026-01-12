@@ -4,30 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
-    <!-- Tagi blokujące pamięć podręczną (Cache-Control) -->
+    <!-- Anti-cache -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
-    <title>VITA-KOD 2.0 | Tomasz Wawrzak</title>
+    <title>VITA-KOD 2.4 | Tomasz Wawrzak</title>
     
-    <!-- PWA & Mobile Meta Tags -->
+    <!-- PWA Meta -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#7F5539">
     <meta name="apple-mobile-web-app-title" content="VITA-KOD">
     
-    <!-- Inline Manifest - Display Standalone ukrywa pasek adresu -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"VITA-KOD 2.0","short_name":"VITA-KOD","description":"Plan suplementacji Tomasza Wawrzaka","start_url":"index.html","display":"standalone","background_color":"#EDE0D4","theme_color":"#7F5539","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3004/3004458.png","sizes":"512x512","type":"image/png"}]}'>
-
-    <!-- Apple Touch Icon -->
+    <!-- Manifest -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"VITA-KOD 2.4","short_name":"VITA-KOD","description":"Indywidualny plan suplementacji","start_url":".","display":"standalone","background_color":"#EDE0D4","theme_color":"#7F5539","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3004/3004458.png","sizes":"512x512","type":"image/png"}]}'>
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004458.png">
 
     <style>
         :root {
             --sky-fasting: #EDE0D4;
             --sky-breakfast: #E6CCB2;
+            --sky-afternoon: #E3D5CA;
             --sky-dinner: #DDB892;
             --sky-sleep: #7F5539;
             --accent: #4E342E; 
@@ -37,7 +36,7 @@
         
         body { 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background: #F5F5F5; 
+            background: #F8F9FA; 
             margin: 0; 
             padding: env(safe-area-inset-top) 10px env(safe-area-inset-bottom) 10px; 
             color: var(--accent); 
@@ -49,70 +48,72 @@
             background: #fff; 
             border-radius: 35px; 
             overflow: hidden; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08); 
         }
         
         header { 
-            padding: 30px 20px; 
+            padding: 25px 20px; 
             text-align: center; 
             background: #fff; 
             border-bottom: 2px solid #EDE0D4; 
         }
         
-        h1 { margin: 0; font-size: 26px; color: #7F5539; letter-spacing: 1px; }
-        .date { font-size: 15px; font-weight: 700; color: #B08968; text-transform: uppercase; margin-top: 5px; }
+        h1 { margin: 0; font-size: 24px; color: #7F5539; letter-spacing: 1px; }
+        .date { font-size: 14px; font-weight: 700; color: #B08968; text-transform: uppercase; margin-top: 5px; }
 
-        .time-block { padding: 25px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .time-block { padding: 20px 15px; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .fasting { background-color: var(--sky-fasting); }
         .breakfast { background-color: var(--sky-breakfast); }
+        .afternoon { background-color: var(--sky-afternoon); }
         .dinner { background-color: var(--sky-dinner); }
         .sleep { background-color: var(--sky-sleep); color: white; }
 
-        .time-label { display: flex; align-items: center; font-size: 18px; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; }
-        .time-label span { font-size: 24px; margin-right: 12px; }
+        .time-label { display: flex; align-items: center; font-size: 16px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; }
+        .time-label span { font-size: 22px; margin-right: 10px; }
 
         .card { 
             background: rgba(255, 255, 255, 0.7); 
-            border-radius: 20px; 
-            padding: 18px; 
-            margin-bottom: 12px; 
+            border-radius: 18px; 
+            padding: 15px; 
+            margin-bottom: 10px; 
             display: flex; 
             align-items: center; 
             border: 1px solid rgba(255,255,255,0.5);
             cursor: pointer;
-            user-select: none;
             transition: all 0.2s;
         }
-        .card:active { transform: scale(0.96); opacity: 0.8; }
+        .card:last-child { margin-bottom: 0; }
+        .card:active { transform: scale(0.97); opacity: 0.9; }
 
-        .sleep .card { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.15); color: white; }
+        .sleep .card { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.1); color: white; }
 
         input[type="checkbox"] { 
-            width: 32px; 
-            height: 32px; 
+            width: 28px; 
+            height: 28px; 
             margin-right: 15px; 
             accent-color: #7F5539; 
             flex-shrink: 0; 
         }
         
         .info { flex: 1; pointer-events: none; }
-        .name { font-size: 16px; font-weight: 700; display: block; }
-        .hint { font-size: 13px; opacity: 0.85; line-height: 1.4; display: block; }
+        .name { font-size: 15px; font-weight: 700; display: block; }
+        .hint { font-size: 12px; opacity: 0.85; line-height: 1.3; display: block; margin-top: 2px; }
 
         .warning-footer { 
-            padding: 20px; 
+            padding: 15px; 
             background: #FFF9F5; 
             border-top: 4px solid #DDB892; 
-            font-size: 13px; 
+            font-size: 12px; 
             text-align: center; 
             font-weight: 700; 
             color: #7F5539; 
+            line-height: 1.4;
         }
         
         footer { 
             text-align: center; 
-            padding: 30px 20px; 
-            font-size: 11px; 
+            padding: 25px 20px; 
+            font-size: 10px; 
             color: #A89081; 
         }
         .signature { font-weight: bold; color: #7F5539; }
@@ -127,86 +128,114 @@
 
 <div class="app-container">
     <header>
-        <h1>🛡️ VITA-KOD 2.0</h1>
+        <h1>🛡️ VITA-KOD 2.4</h1>
         <div id="date" class="date"></div>
     </header>
 
+    <!-- 1. NA CZCZO -->
     <div class="time-block fasting">
         <div class="time-label"><span>💧</span> Na Czczo</div>
         <label class="card">
             <input type="checkbox" id="c1">
             <div class="info">
-                <span class="name">BPC-157 ARG + KPV</span>
-                <span class="hint">Biolab: Letnia woda, 30 min przed jedzeniem.</span>
+                <span class="name">Peptydy: BPC-157 + KPV</span>
+                <span class="hint">30 min przed posiłkiem. Tylko woda.</span>
             </div>
         </label>
     </div>
 
+    <!-- 2. ŚNIADANIE -->
     <div class="time-block breakfast">
         <div class="time-label"><span>🍳</span> Śniadanie</div>
         <label class="card">
             <input type="checkbox" id="c2">
             <div class="info">
                 <span class="name">B-Complex + NAC</span>
-                <span class="hint">OstroVit: Szklanka wody, energia na start.</span>
+                <span class="hint">Wsparcie procesów detoksykacji i energii.</span>
+            </div>
+        </label>
+        <label class="card">
+            <input type="checkbox" id="c_diosmin">
+            <div class="info">
+                <span class="name">Diosmina + Hesperydyna</span>
+                <span class="hint">Wsparcie naczyń krwionośnych (1 kapsułka).</span>
+            </div>
+        </label>
+        <label class="card">
+            <input type="checkbox" id="c_creatine">
+            <div class="info">
+                <span class="name">Monohydrat Kreatyny</span>
+                <span class="hint">3-5g dziennie. Wsparcie mięśni i mózgu.</span>
             </div>
         </label>
     </div>
 
+    <!-- 3. POPOŁUDNIE - OPTYMALNY CZAS NA BŁONNIK -->
+    <div class="time-block afternoon">
+        <div class="time-label"><span>🍏</span> Popołudnie</div>
+        <label class="card">
+            <input type="checkbox" id="c_fiber">
+            <div class="info">
+                <span class="name">Błonnik (w proszku)</span>
+                <span class="hint">Wymieszać w 250ml wody + dodatkowa szklanka po.</span>
+            </div>
+        </label>
+    </div>
+
+    <!-- 4. OBIAD -->
     <div class="time-block dinner">
         <div class="time-label"><span>☀️</span> Obiad</div>
         <label class="card">
             <input type="checkbox" id="c3">
             <div class="info">
                 <span class="name">Wapń + D3 + K2 + Kolagen</span>
-                <span class="hint">OstroVit: Budowa kości. Wymaga tłuszczu!</span>
+                <span class="hint">Wymaga posiłku z zawartością tłuszczu.</span>
             </div>
         </label>
         <label class="card">
             <input type="checkbox" id="c4">
             <div class="info">
                 <span class="name">Omega-3 + Chrom</span>
-                <span class="hint">OstroVit: Serce i cukier pod kontrolą.</span>
+                <span class="hint">Serce i stabilny poziom cukru we krwi.</span>
             </div>
         </label>
     </div>
 
+    <!-- 5. PRZED SNEM -->
     <div class="time-block sleep">
         <div class="time-label"><span>🌌</span> Przed Snem</div>
         <label class="card">
             <input type="checkbox" id="c5">
             <div class="info">
                 <span class="name">Lit + Bor + Magnez</span>
-                <span class="hint">Biolab: Regeneracja nocna mózgu i kości.</span>
+                <span class="hint">Wyciszenie i nocna regeneracja układu kostnego.</span>
             </div>
         </label>
         <label class="card">
             <input type="checkbox" id="c6">
             <div class="info">
                 <span class="name">Glicyna (Napój)</span>
-                <span class="hint">OstroVit: Słodki relaks dla głębokiego snu.</span>
+                <span class="hint">Naturalne wsparcie głębokiego snu.</span>
             </div>
         </label>
     </div>
 
     <div class="warning-footer">
-        UWAGA: Odstęp między Wapniem (Obiad) a Magnezem (Noc) jest kluczowy dla wchłaniania!
+        ZŁOTA ZASADA: Błonnik przyjmuj minimum 2h przed lub po innych suplementach. Bez dużej ilości wody błonnik nie zadziała!
     </div>
 
     <footer>
-        Projekt i koncepcja: <span class="signature">Tomasz Wawrzak</span><br>
-        Wsparcie merytoryczne i kod: <span class="signature">Gemini 2.5 Flash</span><br>
-        <i>Wersja: 2.1 (PWA Ready)</i>
+        Koncepcja: <span class="signature">Tomasz Wawrzak</span><br>
+        Wsparcie merytoryczne: <span class="signature">Gemini 2.5 Flash</span><br>
+        <i>Wersja 2.4 | System czysty od marek handlowych</i>
     </footer>
 </div>
 
 <script>
-    console.log("VITA-KOD 2.1 - Uruchomiono nową wersję");
-
     function updateApp() {
         const now = new Date();
         const todayStr = now.toLocaleDateString('pl-PL');
-        const lastDate = localStorage.getItem('last_visit_v2');
+        const lastDate = localStorage.getItem('last_visit_v24');
         
         document.getElementById('date').innerText = now.toLocaleDateString('pl-PL', { 
             weekday: 'long', 
@@ -219,7 +248,7 @@
                 b.checked = false;
                 localStorage.setItem(b.id, false);
             });
-            localStorage.setItem('last_visit_v2', todayStr);
+            localStorage.setItem('last_visit_v24', todayStr);
         }
     }
 
@@ -231,7 +260,6 @@
 
     updateApp();
 
-    // Rejestracja SW dla instalacji PWA
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             const swCode = "self.addEventListener('install', (e) => self.skipWaiting()); self.addEventListener('fetch', (e) => {});";
