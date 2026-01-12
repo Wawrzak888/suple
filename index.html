@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#FDFBF7">
+    <!-- ZMIANA: Domyślny ciemny motyw dla Androida/PWA, aby uniknąć białego błysku -->
+    <meta name="theme-color" content="#1A1A1A">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="VITA-KOD 2.5 - Twój osobisty tracker suplementacji">
     
     <title>VITA-KOD 2.5</title>
 
-    <!-- Inline Web Manifest (Data URI) - Pozwala na instalację PWA bez zewnętrznego pliku -->
-    <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"VITA-KOD 2.5","short_name":"VitaKod","start_url":".","display":"standalone","background_color":"#FDFBF7","theme_color":"#FDFBF7","icons":[{"src":"https://picsum.photos/seed/vitakodicon/192/192","sizes":"192x192","type":"image/jpeg"}]}'>
+    <!-- Inline Web Manifest (Zaktualizowany kolory) -->
+    <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"VITA-KOD 2.5","short_name":"VitaKod","start_url":".","display":"standalone","background_color":"#1A1A1A","theme_color":"#1A1A1A","icons":[{"src":"https://picsum.photos/seed/vitakodicon/192/192","sizes":"192x192","type":"image/jpeg"}]}'>
 
     <!-- Preconnect dla czcionek -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,21 +20,63 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
+        /* 
+           ZMIANA LOGIKI KOLORÓW:
+           Ustawiamy zmienne CSS warunkowo.
+           Jeśli system jest w trybie ciemnym (lub użytkownik zmienił klasę na body),
+           stosujemy paletę Dark Mode. W przeciwnym razie Light.
+        */
         :root {
-            /* Paleta barw: Ciepła, Ziemska */
-            --bg-color: #FDFBF7; /* Kremowy papier */
-            --card-bg: #FFFFFF;
-            --text-primary: #3E3228; /* Głęboki brąz */
-            --text-secondary: #8C7B70;
-            --accent-primary: #8D6E63; /* Ciepły brąz */
-            --accent-secondary: #D7CCC8; /* Jasny piaskowy */
-            --accent-success: #689F38; /* Oliwkowy zieleń */
-            --shadow-soft: 0 8px 24px rgba(62, 50, 40, 0.08);
-            --shadow-active: 0 4px 12px rgba(62, 50, 40, 0.12);
+            /* Wspólne zmienne */
             --radius-xl: 24px;
             --radius-md: 16px;
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
+            
+            /* Domyślnie (Light Mode) - zachowane jako rezerwowy */
+            --bg-color: #FDFBF7;
+            --card-bg: #FFFFFF;
+            --text-primary: #3E3228;
+            --text-secondary: #8C7B70;
+            --accent-primary: #8D6E63;
+            --accent-secondary: #D7CCC8;
+            --accent-success: #689F38;
+            --shadow-soft: 0 8px 24px rgba(62, 50, 40, 0.08);
+            --shadow-active: 0 4px 12px rgba(62, 50, 40, 0.12);
+            --input-bg: #f0f0f0;
+            --progress-track: var(--accent-secondary);
+        }
+
+        /* DARK MODE - Preferencje systemowe + manualna klasa */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121212;          /* Głęboki grafit/czerń */
+                --card-bg: #1E1E1E;           /* Ciemny szary */
+                --text-primary: #E0E0E0;      /* Jasny szary */
+                --text-secondary: #A0A0A0;    /* Szary */
+                --accent-primary: #D7CCC8;    /* Jasny piaskowy (dla kontrastu) */
+                --accent-secondary: #3E3228; /* Głęboki brąz */
+                --accent-success: #8BC34A;    /* Jaśniejsza zieleń */
+                --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.4); /* Mocniejsze cienie */
+                --shadow-active: 0 4px 12px rgba(0, 0, 0, 0.6);
+                --input-bg: #2C2C2C;
+                --progress-track: #333333;
+            }
+        }
+
+        /* Manualny override (gdy użytkownik przełączy) */
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --text-primary: #E0E0E0;
+            --text-secondary: #A0A0A0;
+            --accent-primary: #D7CCC8;
+            --accent-secondary: #3E3228;
+            --accent-success: #8BC34A;
+            --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-active: 0 4px 12px rgba(0, 0, 0, 0.6);
+            --input-bg: #2C2C2C;
+            --progress-track: #333333;
         }
 
         * {
@@ -48,9 +91,20 @@
             margin: 0;
             padding: calc(var(--safe-top) + 20px) 16px calc(var(--safe-bottom) + 80px);
             min-height: 100vh;
-            /* Delikatna tekstura ziarna na tle */
-            background-image: radial-gradient(#D7CCC8 1px, transparent 1px);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* Tekstura tła - subtelna, dopasowana do motywu */
+            background-image: radial-gradient(var(--accent-secondary) 1px, transparent 1px);
             background-size: 24px 24px;
+            /* W trybie ciemnym przyciemniamy teksturę, żeby nie raziła */
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+            }
+        }
+        body.dark-mode {
+            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
         }
 
         /* --- Header --- */
@@ -65,6 +119,7 @@
             font-size: 2rem;
             margin: 0;
             letter-spacing: -0.5px;
+            /* Gradient tekstu dostosowany do motywu */
             background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -78,10 +133,33 @@
             font-weight: 400;
         }
 
+        /* --- Theme Toggle Button --- */
+        .theme-toggle {
+            position: absolute;
+            top: -5px;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--accent-secondary);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.2s;
+        }
+        .theme-toggle:active {
+            transform: scale(0.9);
+        }
+
         /* --- Progress Bar --- */
         .progress-container {
             margin-bottom: 30px;
-            background: var(--accent-secondary);
+            background: var(--progress-track);
             height: 12px;
             border-radius: 10px;
             overflow: hidden;
@@ -163,10 +241,10 @@
             box-shadow: var(--shadow-active);
         }
 
-        /* Checked State */
+        /* Checked State - Zaktualizowane kolory dla ciemnego trybu */
         .supp-card.checked {
             border-color: var(--accent-success);
-            background: #F1F8E9; /* Bardzo jasna zieleń */
+            background: rgba(139, 195, 74, 0.1); /* Bardzo transparentna zieleń */
         }
 
         .supp-card.checked .card-title {
@@ -231,7 +309,7 @@
         }
 
         .check-icon {
-            color: white;
+            color: var(--bg-color); /* Kolor znacznika zależny od tła dla kontrastu */
             font-size: 1.2rem;
             opacity: 0;
             transform: scale(0.5);
@@ -245,12 +323,27 @@
             border-left: 4px solid #FF9800;
             padding: 16px;
             border-radius: var(--radius-md);
+            color: #5D4037;
+            transition: all 0.3s;
+        }
+
+        /* Dark Mode Override dla ostrzeżenia */
+        @media (prefers-color-scheme: dark) {
+            .fiber-warning {
+                background: rgba(255, 152, 0, 0.15);
+                border-left-color: #FF9800;
+                color: #FFCC80;
+            }
+        }
+        body.dark-mode .fiber-warning {
+            background: rgba(255, 152, 0, 0.15);
+            border-left-color: #FF9800;
+            color: #FFCC80;
         }
 
         .fiber-warning h3 {
             margin: 0 0 6px 0;
             font-size: 0.95rem;
-            color: #E65100;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -259,7 +352,6 @@
         .fiber-warning p {
             margin: 0;
             font-size: 0.85rem;
-            color: #5D4037;
             line-height: 1.4;
         }
 
@@ -292,9 +384,10 @@
 
     </style>
 </head>
-<body>
+<body class="dark-mode">
 
     <header>
+        <button class="theme-toggle" id="theme-btn" aria-label="Zmień motyw">☀️</button>
         <h1>VITA-KOD 2.5</h1>
         <div class="subtitle" id="date-display">Dziś: Ładowanie...</div>
     </header>
@@ -322,7 +415,7 @@
     <script>
         /**
          * VITA-KOD 2.5 Logic
-         * Architektura: Vanilla JS ES6, Module Pattern
+         * Obsługa motywów + Logika biznesowa
          */
 
         const app = (() => {
@@ -369,13 +462,16 @@
                 }
             ];
 
-            const STORAGE_KEY = 'vitaKodData_v2';
+            const STORAGE_KEY = 'vitaKodData_v3';
+            const THEME_KEY = 'vitaKodTheme';
             
             // Elementy DOM
             const container = document.getElementById('app-container');
             const dateDisplay = document.getElementById('date-display');
             const progressBar = document.getElementById('progress-bar');
             const progressText = document.getElementById('progress-text');
+            const themeBtn = document.getElementById('theme-btn');
+            const body = document.body;
 
             // Stan aplikacji
             let state = {
@@ -383,13 +479,46 @@
                 checkedIds: []
             };
 
+            let currentTheme = 'dark';
+
             // Inicjalizacja
             function init() {
+                loadTheme();
                 loadData();
                 renderDate();
                 checkAutoReset();
                 render();
                 updateProgress();
+                
+                themeBtn.addEventListener('click', toggleTheme);
+            }
+
+            // --- Obsługa Motywów ---
+            function loadTheme() {
+                const savedTheme = localStorage.getItem(THEME_KEY);
+                if (savedTheme) {
+                    currentTheme = savedTheme;
+                } else {
+                    // Domyślnie ciemny, jeśli nie ustawiono
+                    currentTheme = 'dark';
+                }
+                applyTheme(currentTheme);
+            }
+
+            function toggleTheme() {
+                currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                localStorage.setItem(THEME_KEY, currentTheme);
+                applyTheme(currentTheme);
+            }
+
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    body.classList.add('dark-mode');
+                    themeBtn.textContent = '☀️'; // Pokaż ikonę słońca (można zmienić na jasny)
+                } else {
+                    body.classList.remove('dark-mode');
+                    themeBtn.textContent = '🌙';
+                }
             }
 
             // Formatowanie daty
@@ -408,7 +537,6 @@
 
             function renderDate() {
                 const today = getTodayDateString();
-                // Zamieniamy pierwszą literę na wielką (dla polskich znaków locale string czasem daje małą)
                 dateDisplay.textContent = today.charAt(0).toUpperCase() + today.slice(1);
             }
 
@@ -430,11 +558,9 @@
             function checkAutoReset() {
                 const today = getSimpleDate();
                 if (state.lastDate !== today) {
-                    // Nowy dzień - resetujemy checkboxy
                     state.checkedIds = [];
                     state.lastDate = today;
                     saveData();
-                    console.log("VITA-KOD: Nowy dzień, zresetowano postęp.");
                 }
             }
 
@@ -443,11 +569,9 @@
                 container.innerHTML = '';
 
                 supplementsData.forEach(group => {
-                    // Tworzymy sekcję dla grupy czasowej
                     const groupSection = document.createElement('div');
                     groupSection.className = 'time-group';
 
-                    // Nagłówek grupy
                     const header = document.createElement('div');
                     header.className = 'time-header';
                     header.innerHTML = `
@@ -456,7 +580,6 @@
                     `;
                     groupSection.appendChild(header);
 
-                    // Karty z suplementami
                     group.items.forEach(item => {
                         const isChecked = state.checkedIds.includes(item.id);
                         
@@ -465,7 +588,6 @@
                         card.onclick = () => toggleItem(item.id);
                         card.setAttribute('role', 'button');
                         
-                        // Budowanie HTML karty
                         const hintHtml = item.hint 
                             ? `<div class="card-hint"><span class="hint-icon">💡</span> ${item.hint}</div>` 
                             : '';
@@ -475,6 +597,7 @@
                                 <div class="card-info">
                                     <h2 class="card-title">${item.name}</h2>
                                     ${hintHtml}
+                                }
                                 </div>
                                 <div class="check-circle">
                                     <span class="check-icon">✓</span>
@@ -497,40 +620,36 @@
                     state.checkedIds.splice(index, 1);
                 }
                 saveData();
-                render(); // Ponowne renderowanie w celu aktualizacji klas CSS
+                render();
             }
 
             // Aktualizacja paska postępu
             function updateProgress() {
-                // Obliczamy całkowitą liczbę wszystkich elementów (spłaszczona tablica)
                 const totalItems = supplementsData.reduce((acc, group) => acc + group.items.length, 0);
                 const completedItems = state.checkedIds.length;
                 
                 const percentage = Math.round((completedItems / totalItems) * 100);
                 
                 progressBar.style.width = `${percentage}%`;
-                progressText.textContent = `${percentage% 10 === 0 && percentage !== 100 ? percentage + '0' : percentage}% Ukończono`; // Estetyka
-
-                // Zmiana koloru paska przy 100%
+                
                 if (percentage === 100) {
                     progressText.textContent = "Świetna robota! 🌿";
                     progressText.style.color = "var(--accent-success)";
                 } else {
+                    progressText.textContent = `${percentage}% Ukończono`;
                     progressText.style.color = "var(--text-secondary)";
                 }
             }
 
-            // Funkcja testowa do resetowania
             function resetData() {
                 if(confirm("Czy na pewno chcesz usunąć cały postęp?")) {
                     state.checkedIds = [];
-                    state.lastDate = null; // Wymusi reset przy kolejnym załadowaniu
+                    state.lastDate = null;
                     saveData();
                     location.reload();
                 }
             }
 
-            // Public API
             return {
                 init,
                 resetData
@@ -538,14 +657,7 @@
 
         })();
 
-        // Uruchomienie aplikacji po załadowaniu DOM
         document.addEventListener('DOMContentLoaded', app.init);
-
-        // Obsługa Service Workera dla PWA (opcjonalna, ale dobra praktyka dla trybu offline w przyszłości)
-        if ('serviceWorker' in navigator) {
-            // W tym przykładzie nie używamy zewnętrznego pliku SW, ale struktura jest gotowa na rozbudowę.
-            console.log("VITA-KOD PWA: Service Worker support detected.");
-        }
 
     </script>
 </body>
