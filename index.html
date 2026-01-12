@@ -2,81 +2,30 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <!-- ZMIANA: Domyślny ciemny motyw dla Androida/PWA, aby uniknąć białego błysku -->
-    <meta name="theme-color" content="#1A1A1A">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="description" content="VITA-KOD 2.5 - Twój osobisty tracker suplementacji">
-    
-    <title>VITA-KOD 2.5</title>
+    <meta name="theme-color" content="#7F5539">
+    <title>VITA-KOD 3.1</title>
 
-    <!-- Inline Web Manifest (Zaktualizowany kolory) -->
-    <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"VITA-KOD 2.5","short_name":"VitaKod","start_url":".","display":"standalone","background_color":"#1A1A1A","theme_color":"#1A1A1A","icons":[{"src":"https://picsum.photos/seed/vitakodicon/192/192","sizes":"192x192","type":"image/jpeg"}]}'>
+    <!-- Web Manifest -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"VITA-KOD 3.1","short_name":"VITA-KOD","display":"standalone","background_color":"#FDFBF7","theme_color":"#7F5539","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3004/3004451.png","sizes":"512x512","type":"image/png"}]}'>
 
-    <!-- Preconnect dla czcionek -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* 
-           ZMIANA LOGIKI KOLORÓW:
-           Ustawiamy zmienne CSS warunkowo.
-           Jeśli system jest w trybie ciemnym (lub użytkownik zmienił klasę na body),
-           stosujemy paletę Dark Mode. W przeciwnym razie Light.
-        */
         :root {
-            /* Wspólne zmienne */
-            --radius-xl: 24px;
-            --radius-md: 16px;
-            --safe-top: env(safe-area-inset-top);
-            --safe-bottom: env(safe-area-inset-bottom);
-            
-            /* Domyślnie (Light Mode) - zachowane jako rezerwowy */
             --bg-color: #FDFBF7;
-            --card-bg: #FFFFFF;
-            --text-primary: #3E3228;
-            --text-secondary: #8C7B70;
-            --accent-primary: #8D6E63;
-            --accent-secondary: #D7CCC8;
-            --accent-success: #689F38;
-            --shadow-soft: 0 8px 24px rgba(62, 50, 40, 0.08);
-            --shadow-active: 0 4px 12px rgba(62, 50, 40, 0.12);
-            --input-bg: #f0f0f0;
-            --progress-track: var(--accent-secondary);
-        }
-
-        /* DARK MODE - Preferencje systemowe + manualna klasa */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #121212;          /* Głęboki grafit/czerń */
-                --card-bg: #1E1E1E;           /* Ciemny szary */
-                --text-primary: #E0E0E0;      /* Jasny szary */
-                --text-secondary: #A0A0A0;    /* Szary */
-                --accent-primary: #D7CCC8;    /* Jasny piaskowy (dla kontrastu) */
-                --accent-secondary: #3E3228; /* Głęboki brąz */
-                --accent-success: #8BC34A;    /* Jaśniejsza zieleń */
-                --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.4); /* Mocniejsze cienie */
-                --shadow-active: 0 4px 12px rgba(0, 0, 0, 0.6);
-                --input-bg: #2C2C2C;
-                --progress-track: #333333;
-            }
-        }
-
-        /* Manualny override (gdy użytkownik przełączy) */
-        body.dark-mode {
-            --bg-color: #121212;
-            --card-bg: #1E1E1E;
-            --text-primary: #E0E0E0;
-            --text-secondary: #A0A0A0;
-            --accent-primary: #D7CCC8;
-            --accent-secondary: #3E3228;
-            --accent-success: #8BC34A;
-            --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.4);
-            --shadow-active: 0 4px 12px rgba(0, 0, 0, 0.6);
-            --input-bg: #2C2C2C;
-            --progress-track: #333333;
+            --primary-brown: #7F5539;
+            --secondary-brown: #B08968;
+            --light-cream: #EDE0D4;
+            --accent-green: #6B705C;
+            --text-dark: #432818;
+            --text-light: #8C7B70;
+            --white: #FFFFFF;
+            --safe-top: env(safe-area-inset-top);
         }
 
         * {
@@ -87,578 +36,438 @@
         body {
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-primary);
+            color: var(--text-dark);
             margin: 0;
-            padding: calc(var(--safe-top) + 20px) 16px calc(var(--safe-bottom) + 80px);
+            padding: calc(var(--safe-top) + 20px) 20px 100px;
             min-height: 100vh;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            /* Tekstura tła - subtelna, dopasowana do motywu */
-            background-image: radial-gradient(var(--accent-secondary) 1px, transparent 1px);
-            background-size: 24px 24px;
-            /* W trybie ciemnym przyciemniamy teksturę, żeby nie raziła */
-        }
-        
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-            }
-        }
-        body.dark-mode {
-            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+            line-height: 1.5;
         }
 
-        /* --- Header --- */
+        /* Nagłówek i Postęp */
         header {
-            text-align: center;
-            margin-bottom: 32px;
-            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
         }
 
         h1 {
-            font-weight: 700;
-            font-size: 2rem;
+            font-size: 24px;
             margin: 0;
-            letter-spacing: -0.5px;
-            /* Gradient tekstu dostosowany do motywu */
-            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
+            font-weight: 700;
+            color: var(--primary-brown);
         }
 
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-top: 4px;
-            font-weight: 400;
-        }
-
-        /* --- Theme Toggle Button --- */
-        .theme-toggle {
-            position: absolute;
-            top: -5px;
-            right: 0;
-            background: var(--card-bg);
-            border: 1px solid var(--accent-secondary);
-            color: var(--text-primary);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.2rem;
-            box-shadow: var(--shadow-soft);
-            transition: transform 0.2s;
-        }
-        .theme-toggle:active {
-            transform: scale(0.9);
-        }
-
-        /* --- Progress Bar --- */
-        .progress-container {
+        .progress-wrapper {
+            background: var(--light-cream);
+            border-radius: 12px;
+            height: 10px;
+            width: 100%;
             margin-bottom: 30px;
-            background: var(--progress-track);
-            height: 12px;
-            border-radius: 10px;
             overflow: hidden;
             position: relative;
         }
 
-        .progress-bar {
+        #progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-success));
+            background: var(--primary-brown);
             width: 0%;
-            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border-radius: 10px;
+            transition: width 0.5s ease;
         }
 
-        .progress-text {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-align: right;
-            margin-top: 6px;
-            font-weight: 600;
+        /* Układ sekcji */
+        .time-section {
+            margin-bottom: 25px;
         }
 
-        /* --- Cards & Grid --- */
-        .supplements-grid {
-            display: grid;
-            gap: 20px;
-        }
-
-        .time-group {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .time-header {
+        .section-header {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: -8px;
-            margin-left: 4px;
-        }
-
-        .time-icon {
-            font-size: 1.4rem;
-            background: var(--bg-color);
-            padding: 4px;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .time-label {
+            margin-bottom: 12px;
             font-weight: 600;
-            color: var(--accent-primary);
+            color: var(--secondary-brown);
             text-transform: uppercase;
-            font-size: 0.85rem;
+            font-size: 13px;
             letter-spacing: 1px;
         }
 
-        /* --- Interactive Cards --- */
+        .cards-container {
+            display: grid;
+            gap: 12px;
+        }
+
+        /* Styl karty */
         .supp-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-xl);
-            padding: 0;
-            box-shadow: var(--shadow-soft);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid transparent;
-        }
-
-        .supp-card:active {
-            transform: scale(0.98);
-            box-shadow: var(--shadow-active);
-        }
-
-        /* Checked State - Zaktualizowane kolory dla ciemnego trybu */
-        .supp-card.checked {
-            border-color: var(--accent-success);
-            background: rgba(139, 195, 74, 0.1); /* Bardzo transparentna zieleń */
-        }
-
-        .supp-card.checked .card-title {
-            text-decoration: line-through;
-            color: var(--text-secondary);
-        }
-
-        .supp-card.checked .check-circle {
-            background-color: var(--accent-success);
-            border-color: var(--accent-success);
-        }
-
-        .supp-card.checked .check-icon {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .card-content {
-            padding: 18px;
+            background: var(--white);
+            padding: 16px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(127, 85, 57, 0.05);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            position: relative;
         }
 
-        .card-info {
+        .supp-card.checked {
+            background: var(--light-cream);
+            border-color: var(--secondary-brown);
+            opacity: 0.8;
+        }
+
+        .supp-info {
             flex: 1;
-            padding-right: 16px;
         }
 
-        .card-title {
-            font-size: 1.05rem;
+        .supp-name {
             font-weight: 600;
-            margin: 0 0 4px 0;
-            color: var(--text-primary);
-            transition: color 0.2s;
+            font-size: 16px;
+            margin-bottom: 2px;
         }
 
-        .card-hint {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-            line-height: 1.3;
+        .supp-hint {
+            font-size: 12px;
+            color: var(--text-light);
         }
 
-        .hint-icon {
-            font-size: 0.9rem;
-        }
-
-        /* Custom Checkbox Circle */
-        .check-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid var(--accent-secondary);
+        /* Niestandardowy Checkbox */
+        .checkbox-custom {
+            width: 26px;
+            height: 26px;
+            border: 2px solid var(--secondary-brown);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            flex-shrink: 0;
-        }
-
-        .check-icon {
-            color: var(--bg-color); /* Kolor znacznika zależny od tła dla kontrastu */
-            font-size: 1.2rem;
-            opacity: 0;
-            transform: scale(0.5);
             transition: all 0.2s;
         }
 
-        /* --- Special Sections --- */
-        .fiber-warning {
-            margin-top: 40px;
-            background: #FFF3E0;
-            border-left: 4px solid #FF9800;
-            padding: 16px;
-            border-radius: var(--radius-md);
-            color: #5D4037;
-            transition: all 0.3s;
+        .checked .checkbox-custom {
+            background: var(--secondary-brown);
         }
 
-        /* Dark Mode Override dla ostrzeżenia */
-        @media (prefers-color-scheme: dark) {
-            .fiber-warning {
-                background: rgba(255, 152, 0, 0.15);
-                border-left-color: #FF9800;
-                color: #FFCC80;
-            }
-        }
-        body.dark-mode .fiber-warning {
-            background: rgba(255, 152, 0, 0.15);
-            border-left-color: #FF9800;
-            color: #FFCC80;
+        .checkbox-custom::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            display: none;
         }
 
-        .fiber-warning h3 {
-            margin: 0 0 6px 0;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .fiber-warning p {
-            margin: 0;
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-
-        /* --- Footer --- */
-        footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            opacity: 0.7;
-            padding-bottom: 20px;
-        }
-        
-        footer span {
-            font-weight: 600;
-        }
-
-        /* --- Reset Button (Admin) --- */
-        .reset-btn {
+        .checked .checkbox-custom::after {
             display: block;
-            margin: 20px auto 0;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            text-decoration: underline;
-            font-size: 0.8rem;
-            cursor: pointer;
-            opacity: 0.5;
         }
 
+        /* Style zarządzania */
+        .btn-edit-toggle {
+            background: var(--light-cream);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: 600;
+            color: var(--primary-brown);
+            cursor: pointer;
+        }
+
+        .edit-mode .delete-btn {
+            display: flex;
+        }
+
+        .delete-btn {
+            display: none;
+            background: #e63946;
+            color: white;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .add-btn {
+            background: dashed 2px var(--secondary-brown);
+            border: 2px dashed var(--secondary-brown);
+            color: var(--secondary-brown);
+            padding: 12px;
+            border-radius: 18px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .edit-mode .add-btn {
+            display: block;
+        }
+
+        .edit-mode .checkbox-custom {
+            display: none;
+        }
+
+        /* Modal */
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(67, 40, 24, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal {
+            background: var(--bg-color);
+            padding: 24px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            color: var(--primary-brown);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid var(--light-cream);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 16px;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-main {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-save { background: var(--primary-brown); color: white; }
+        .btn-cancel { background: var(--light-cream); color: var(--text-dark); }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 40px;
+        }
     </style>
 </head>
-<body class="dark-mode">
+<body>
 
-    <header>
-        <button class="theme-toggle" id="theme-btn" aria-label="Zmień motyw">☀️</button>
-        <h1>VITA-KOD 2.5</h1>
-        <div class="subtitle" id="date-display">Dziś: Ładowanie...</div>
-    </header>
-
-    <div class="progress-container">
-        <div class="progress-bar" id="progress-bar"></div>
+<header>
+    <div id="date-label">
+        <h1>VITA-KOD 3.1</h1>
+        <div id="today-date" style="font-size: 14px; color: var(--text-light)"></div>
     </div>
-    <div class="progress-text" id="progress-text">0% Ukończono</div>
+    <button class="btn-edit-toggle" onclick="toggleEditMode()">Edytuj</button>
+</header>
 
-    <main class="supplements-grid" id="app-container">
-        <!-- Content will be injected by JS -->
-    </main>
+<div class="progress-wrapper">
+    <div id="progress-fill"></div>
+</div>
 
-    <div class="fiber-warning">
-        <h3>⚠️ Złota zasada błonnika</h3>
-        <p>Błonnik przyjmuj co najmniej 2h od innych suplementów. Pij wtedy dużo wody, aby nie zmniejszyć wchłanialności składników odżywczych.</p>
+<div id="app-content">
+    <!-- Dynamiczna zawartość -->
+</div>
+
+<div id="modal-overlay">
+    <div class="modal">
+        <h2 id="modal-title">Dodaj suplement</h2>
+        <input type="text" id="new-name" placeholder="Nazwa (np. Magnez)">
+        <input type="text" id="new-hint" placeholder="Notatka (np. po jedzeniu)">
+        <select id="new-time">
+            <option value="Na czczo">Na czczo</option>
+            <option value="Śniadanie">Śniadanie</option>
+            <option value="Południe">Południe</option>
+            <option value="Obiad">Obiad</option>
+            <option value="Przed snem">Przed snem</option>
+        </select>
+        <div class="modal-btns">
+            <button class="btn-main btn-cancel" onclick="closeModal()">Anuluj</button>
+            <button class="btn-main btn-save" onclick="saveItem()">Zapisz</button>
+        </div>
     </div>
+</div>
 
-    <button class="reset-btn" onclick="app.resetData()">Resetuj dane testowe</button>
+<footer>
+    Koncepcja: Tomasz Wawrzak | VITA-KOD System
+</footer>
 
-    <footer>
-        Koncepcja: <span>Tomasz Wawrzak</span>
-    </footer>
+<script>
+    // --- Zarządzanie danymi ---
+    const STORAGE_KEY_LIST = 'vitakod_list_v3';
+    const STORAGE_KEY_STATE = 'vitakod_state_v3';
+    const STORAGE_KEY_DATE = 'vitakod_last_date_v3';
 
-    <script>
-        /**
-         * VITA-KOD 2.5 Logic
-         * Obsługa motywów + Logika biznesowa
-         */
+    let supplements = [
+        { id: '1', time: 'Na czczo', name: 'BPC-157 + KPV', hint: '30 min przed jedzeniem' },
+        { id: '2', time: 'Śniadanie', name: 'B-Complex + NAC', hint: '' },
+        { id: '3', time: 'Śniadanie', name: 'Diosmina + Hesperydyna', hint: '' },
+        { id: '4', time: 'Śniadanie', name: 'Kreatyna', hint: '3-5g' },
+        { id: '5', time: 'Południe', name: 'Błonnik', hint: '2h odstępu, dużo wody' },
+        { id: '6', time: 'Obiad', name: 'Wapń + D3 + K2 + Kolagen', hint: 'Wymaga tłuszczu' },
+        { id: '7', time: 'Obiad', name: 'Omega-3 + Chrom', hint: '' },
+        { id: '8', time: 'Przed snem', name: 'Lit + Bor + Magnez', hint: '' },
+        { id: '9', time: 'Przed snem', name: 'Glicyna', hint: 'Napój' }
+    ];
 
-        const app = (() => {
-            // Konfiguracja suplementów
-            const supplementsData = [
-                {
-                    time: "Na Czczo",
-                    icon: "💧",
-                    items: [
-                        { id: "bpc", name: "Peptydy BPC-157 + KPV", hint: "30 min przed posiłkiem" }
-                    ]
-                },
-                {
-                    time: "Śniadanie",
-                    icon: "🍳",
-                    items: [
-                        { id: "bcomplex", name: "B-Complex + NAC", hint: "" },
-                        { id: "diosmina", name: "Diosmina + Hesperydyna", hint: "" },
-                        { id: "kreatyna", name: "Monohydrat Kreatyny", hint: "3-5g" }
-                    ]
-                },
-                {
-                    time: "Popołudnie",
-                    icon: "🍏",
-                    items: [
-                        { id: "blonnik", name: "Błonnik", hint: "Min. 2h odstępu od innych supli, dużo wody" }
-                    ]
-                },
-                {
-                    time: "Obiad",
-                    icon: "☀️",
-                    items: [
-                        { id: "wapniowit", name: "Wapń + D3 + K2 + Kolagen", hint: "Wymaga tłuszczu" },
-                        { id: "omega", name: "Omega-3 + Chrom", hint: "" }
-                    ]
-                },
-                {
-                    time: "Przed Snem",
-                    icon: "🌌",
-                    items: [
-                        { id: "mikro", name: "Lit + Bor + Magnez", hint: "" },
-                        { id: "glicyna", name: "Glicyna", hint: "Rozpuść w wodzie (napój)" }
-                    ]
-                }
-            ];
+    let checkedIds = [];
+    let isEditMode = false;
 
-            const STORAGE_KEY = 'vitaKodData_v3';
-            const THEME_KEY = 'vitaKodTheme';
+    // --- Logika główna ---
+    function init() {
+        // Załaduj listę jeśli istnieje
+        const savedList = localStorage.getItem(STORAGE_KEY_LIST);
+        if (savedList) supplements = JSON.parse(savedList);
+
+        // Sprawdzenie daty (auto-reset)
+        const today = new Date().toLocaleDateString('pl-PL');
+        const lastDate = localStorage.getItem(STORAGE_KEY_DATE);
+        
+        if (lastDate !== today) {
+            checkedIds = [];
+            localStorage.setItem(STORAGE_KEY_DATE, today);
+            localStorage.setItem(STORAGE_KEY_STATE, JSON.stringify([]));
+        } else {
+            const savedState = localStorage.getItem(STORAGE_KEY_STATE);
+            if (savedState) checkedIds = JSON.parse(savedState);
+        }
+
+        document.getElementById('today-date').innerText = today;
+        render();
+    }
+
+    function render() {
+        const content = document.getElementById('app-content');
+        content.innerHTML = '';
+        
+        const times = ['Na czczo', 'Śniadanie', 'Południe', 'Obiad', 'Przed snem'];
+        
+        times.forEach(time => {
+            const section = document.createElement('div');
+            section.className = 'time-section';
             
-            // Elementy DOM
-            const container = document.getElementById('app-container');
-            const dateDisplay = document.getElementById('date-display');
-            const progressBar = document.getElementById('progress-bar');
-            const progressText = document.getElementById('progress-text');
-            const themeBtn = document.getElementById('theme-btn');
-            const body = document.body;
+            const group = supplements.filter(s => s.time === time);
+            
+            let itemsHtml = group.map(item => {
+                const isChecked = checkedIds.includes(item.id);
+                return `
+                    <div class="supp-card ${isChecked ? 'checked' : ''}" onclick="toggleCheck('${item.id}')">
+                        <div class="supp-info">
+                            <div class="supp-name">${item.name}</div>
+                            <div class="supp-hint">${item.hint}</div>
+                        </div>
+                        <div class="checkbox-custom"></div>
+                        <button class="delete-btn" onclick="deleteItem(event, '${item.id}')">✕</button>
+                    </div>
+                `;
+            }).join('');
 
-            // Stan aplikacji
-            let state = {
-                lastDate: null,
-                checkedIds: []
-            };
+            section.innerHTML = `
+                <div class="section-header">${time}</div>
+                <div class="cards-container">
+                    ${itemsHtml}
+                    <div class="add-btn" onclick="openModal('${time}')">+ Dodaj do tej pory</div>
+                </div>
+            `;
+            content.appendChild(section);
+        });
 
-            let currentTheme = 'dark';
+        updateProgress();
+        if (isEditMode) document.body.classList.add('edit-mode');
+        else document.body.classList.remove('edit-mode');
+    }
 
-            // Inicjalizacja
-            function init() {
-                loadTheme();
-                loadData();
-                renderDate();
-                checkAutoReset();
-                render();
-                updateProgress();
-                
-                themeBtn.addEventListener('click', toggleTheme);
-            }
+    function toggleCheck(id) {
+        if (isEditMode) return;
+        const index = checkedIds.indexOf(id);
+        if (index === -1) checkedIds.push(id);
+        else checkedIds.splice(index, 1);
+        
+        localStorage.setItem(STORAGE_KEY_STATE, JSON.stringify(checkedIds));
+        render();
+    }
 
-            // --- Obsługa Motywów ---
-            function loadTheme() {
-                const savedTheme = localStorage.getItem(THEME_KEY);
-                if (savedTheme) {
-                    currentTheme = savedTheme;
-                } else {
-                    // Domyślnie ciemny, jeśli nie ustawiono
-                    currentTheme = 'dark';
-                }
-                applyTheme(currentTheme);
-            }
+    function updateProgress() {
+        const total = supplements.length;
+        const done = checkedIds.filter(id => supplements.some(s => s.id === id)).length;
+        const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+        document.getElementById('progress-fill').style.width = percent + '%';
+    }
 
-            function toggleTheme() {
-                currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                localStorage.setItem(THEME_KEY, currentTheme);
-                applyTheme(currentTheme);
-            }
+    // --- Akcje CRUD ---
+    function toggleEditMode() {
+        isEditMode = !isEditMode;
+        document.querySelector('.btn-edit-toggle').innerText = isEditMode ? 'Gotowe' : 'Edytuj';
+        render();
+    }
 
-            function applyTheme(theme) {
-                if (theme === 'dark') {
-                    body.classList.add('dark-mode');
-                    themeBtn.textContent = '☀️'; // Pokaż ikonę słońca (można zmienić na jasny)
-                } else {
-                    body.classList.remove('dark-mode');
-                    themeBtn.textContent = '🌙';
-                }
-            }
+    function openModal(time) {
+        document.getElementById('new-time').value = time;
+        document.getElementById('modal-overlay').style.display = 'flex';
+    }
 
-            // Formatowanie daty
-            function getTodayDateString() {
-                return new Date().toLocaleDateString('pl-PL', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
-            }
+    function closeModal() {
+        document.getElementById('modal-overlay').style.display = 'none';
+        document.getElementById('new-name').value = '';
+        document.getElementById('new-hint').value = '';
+    }
 
-            function getSimpleDate() {
-                return new Date().toDateString();
-            }
+    function saveItem() {
+        const name = document.getElementById('new-name').value.trim();
+        const hint = document.getElementById('new-hint').value.trim();
+        const time = document.getElementById('new-time').value;
 
-            function renderDate() {
-                const today = getTodayDateString();
-                dateDisplay.textContent = today.charAt(0).toUpperCase() + today.slice(1);
-            }
+        if (!name) return;
 
-            // Ładowanie danych
-            function loadData() {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (raw) {
-                    state = JSON.parse(raw);
-                }
-            }
+        const newItem = {
+            id: Date.now().toString(),
+            name,
+            hint,
+            time
+        };
 
-            // Zapisywanie danych
-            function saveData() {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-                updateProgress();
-            }
+        supplements.push(newItem);
+        localStorage.setItem(STORAGE_KEY_LIST, JSON.stringify(supplements));
+        closeModal();
+        render();
+    }
 
-            // Logika auto-resetu
-            function checkAutoReset() {
-                const today = getSimpleDate();
-                if (state.lastDate !== today) {
-                    state.checkedIds = [];
-                    state.lastDate = today;
-                    saveData();
-                }
-            }
+    function deleteItem(event, id) {
+        event.stopPropagation();
+        supplements = supplements.filter(s => s.id !== id);
+        checkedIds = checkedIds.filter(cid => cid !== id);
+        localStorage.setItem(STORAGE_KEY_LIST, JSON.stringify(supplements));
+        localStorage.setItem(STORAGE_KEY_STATE, JSON.stringify(checkedIds));
+        render();
+    }
 
-            // Renderowanie interfejsu
-            function render() {
-                container.innerHTML = '';
+    init();
+</script>
 
-                supplementsData.forEach(group => {
-                    const groupSection = document.createElement('div');
-                    groupSection.className = 'time-group';
-
-                    const header = document.createElement('div');
-                    header.className = 'time-header';
-                    header.innerHTML = `
-                        <div class="time-icon">${group.icon}</div>
-                        <div class="time-label">${group.time}</div>
-                    `;
-                    groupSection.appendChild(header);
-
-                    group.items.forEach(item => {
-                        const isChecked = state.checkedIds.includes(item.id);
-                        
-                        const card = document.createElement('div');
-                        card.className = `supp-card ${isChecked ? 'checked' : ''}`;
-                        card.onclick = () => toggleItem(item.id);
-                        card.setAttribute('role', 'button');
-                        
-                        const hintHtml = item.hint 
-                            ? `<div class="card-hint"><span class="hint-icon">💡</span> ${item.hint}</div>` 
-                            : '';
-
-                        card.innerHTML = `
-                            <div class="card-content">
-                                <div class="card-info">
-                                    <h2 class="card-title">${item.name}</h2>
-                                    ${hintHtml}
-                                }
-                                </div>
-                                <div class="check-circle">
-                                    <span class="check-icon">✓</span>
-                                </div>
-                            </div>
-                        `;
-                        groupSection.appendChild(card);
-                    });
-
-                    container.appendChild(groupSection);
-                });
-            }
-
-            // Przełączanie stanu checkboxa
-            function toggleItem(id) {
-                const index = state.checkedIds.indexOf(id);
-                if (index === -1) {
-                    state.checkedIds.push(id);
-                } else {
-                    state.checkedIds.splice(index, 1);
-                }
-                saveData();
-                render();
-            }
-
-            // Aktualizacja paska postępu
-            function updateProgress() {
-                const totalItems = supplementsData.reduce((acc, group) => acc + group.items.length, 0);
-                const completedItems = state.checkedIds.length;
-                
-                const percentage = Math.round((completedItems / totalItems) * 100);
-                
-                progressBar.style.width = `${percentage}%`;
-                
-                if (percentage === 100) {
-                    progressText.textContent = "Świetna robota! 🌿";
-                    progressText.style.color = "var(--accent-success)";
-                } else {
-                    progressText.textContent = `${percentage}% Ukończono`;
-                    progressText.style.color = "var(--text-secondary)";
-                }
-            }
-
-            function resetData() {
-                if(confirm("Czy na pewno chcesz usunąć cały postęp?")) {
-                    state.checkedIds = [];
-                    state.lastDate = null;
-                    saveData();
-                    location.reload();
-                }
-            }
-
-            return {
-                init,
-                resetData
-            };
-
-        })();
-
-        document.addEventListener('DOMContentLoaded', app.init);
-
-    </script>
 </body>
 </html>
