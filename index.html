@@ -7,25 +7,40 @@
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#7F5539">
-    <title>VITA-KOD 3.1</title>
+    <meta id="theme-color-meta" name="theme-color" content="#FDFBF7">
+    <title>VITA-KOD 3.2</title>
 
     <!-- Web Manifest -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"VITA-KOD 3.1","short_name":"VITA-KOD","display":"standalone","background_color":"#FDFBF7","theme_color":"#7F5539","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3004/3004451.png","sizes":"512x512","type":"image/png"}]}'>
+    <link rel="manifest" href='data:application/manifest+json,{"name":"VITA-KOD 3.2","short_name":"VITA-KOD","display":"standalone","background_color":"#FDFBF7","theme_color":"#7F5539","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3004/3004451.png","sizes":"512x512","type":"image/png"}]}'>
 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
+            /* Light Mode Colors */
             --bg-color: #FDFBF7;
+            --card-bg: #FFFFFF;
             --primary-brown: #7F5539;
             --secondary-brown: #B08968;
             --light-cream: #EDE0D4;
-            --accent-green: #6B705C;
             --text-dark: #432818;
             --text-light: #8C7B70;
             --white: #FFFFFF;
             --safe-top: env(safe-area-inset-top);
+            --shadow: rgba(127, 85, 57, 0.08);
+        }
+
+        /* Dark Mode Colors override */
+        body.dark-mode {
+            --bg-color: #1A1A1A;
+            --card-bg: #2C2C2C;
+            --primary-brown: #D7CCC8;
+            --secondary-brown: #A1887F;
+            --light-cream: #3E2723;
+            --text-dark: #F5F5F5;
+            --text-light: #BDBDBD;
+            --white: #2C2C2C;
+            --shadow: rgba(0, 0, 0, 0.4);
         }
 
         * {
@@ -41,13 +56,14 @@
             padding: calc(var(--safe-top) + 20px) 20px 100px;
             min-height: 100vh;
             line-height: 1.5;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* Nagłówek i Postęp */
         header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 25px;
         }
 
@@ -56,6 +72,11 @@
             margin: 0;
             font-weight: 700;
             color: var(--primary-brown);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
         }
 
         .progress-wrapper {
@@ -99,10 +120,10 @@
 
         /* Styl karty */
         .supp-card {
-            background: var(--white);
+            background: var(--card-bg);
             padding: 16px;
             border-radius: 18px;
-            box-shadow: 0 4px 15px rgba(127, 85, 57, 0.05);
+            box-shadow: 0 4px 15px var(--shadow);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -150,7 +171,7 @@
 
         .checkbox-custom::after {
             content: '✓';
-            color: white;
+            color: var(--white);
             font-weight: bold;
             display: none;
         }
@@ -159,25 +180,36 @@
             display: block;
         }
 
-        /* Style zarządzania */
+        /* Style przycisków */
+        .btn-icon {
+            background: var(--light-cream);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--primary-brown);
+        }
+
         .btn-edit-toggle {
             background: var(--light-cream);
             border: none;
-            padding: 8px 12px;
-            border-radius: 10px;
+            padding: 0 16px;
+            height: 40px;
+            border-radius: 12px;
             font-family: inherit;
             font-weight: 600;
             color: var(--primary-brown);
             cursor: pointer;
         }
 
-        .edit-mode .delete-btn {
-            display: flex;
-        }
-
         .delete-btn {
             display: none;
-            background: #e63946;
+            background: #ef5350;
             color: white;
             border: none;
             width: 28px;
@@ -190,8 +222,11 @@
             cursor: pointer;
         }
 
+        .edit-mode .delete-btn { display: flex; }
+        .edit-mode .checkbox-custom { display: none; }
+
         .add-btn {
-            background: dashed 2px var(--secondary-brown);
+            background: transparent;
             border: 2px dashed var(--secondary-brown);
             color: var(--secondary-brown);
             padding: 12px;
@@ -203,23 +238,15 @@
             display: none;
         }
 
-        .edit-mode .add-btn {
-            display: block;
-        }
-
-        .edit-mode .checkbox-custom {
-            display: none;
-        }
+        .edit-mode .add-btn { display: block; }
 
         /* Modal */
         #modal-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(67, 40, 24, 0.8);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -232,39 +259,25 @@
             border-radius: 24px;
             width: 100%;
             max-width: 400px;
-        }
-
-        .modal h2 {
-            margin-top: 0;
-            color: var(--primary-brown);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             margin: 10px 0;
             border: 2px solid var(--light-cream);
             border-radius: 12px;
+            background: var(--card-bg);
+            color: var(--text-dark);
             font-family: inherit;
-            font-size: 16px;
-        }
-
-        .modal-btns {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
         }
 
         .btn-main {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
+            flex: 1; padding: 14px; border: none; border-radius: 12px;
+            font-weight: 600; cursor: pointer;
         }
-
-        .btn-save { background: var(--primary-brown); color: white; }
+        .btn-save { background: var(--primary-brown); color: var(--bg-color); }
         .btn-cancel { background: var(--light-cream); color: var(--text-dark); }
 
         footer {
@@ -276,14 +289,17 @@
         }
     </style>
 </head>
-<body>
+<body class="dark-mode"> <!-- Domyślnie ciemny, zmieni się w JS jeśli trzeba -->
 
 <header>
     <div id="date-label">
-        <h1>VITA-KOD 3.1</h1>
+        <h1>VITA-KOD 3.2</h1>
         <div id="today-date" style="font-size: 14px; color: var(--text-light)"></div>
     </div>
-    <button class="btn-edit-toggle" onclick="toggleEditMode()">Edytuj</button>
+    <div class="header-actions">
+        <button class="btn-icon" onclick="toggleTheme()" id="theme-icon">🌙</button>
+        <button class="btn-edit-toggle" onclick="toggleEditMode()" id="edit-btn">Edytuj</button>
+    </div>
 </header>
 
 <div class="progress-wrapper">
@@ -291,12 +307,12 @@
 </div>
 
 <div id="app-content">
-    <!-- Dynamiczna zawartość -->
+    <!-- Kontent -->
 </div>
 
 <div id="modal-overlay">
     <div class="modal">
-        <h2 id="modal-title">Dodaj suplement</h2>
+        <h2 style="margin-top:0">Dodaj suplement</h2>
         <input type="text" id="new-name" placeholder="Nazwa (np. Magnez)">
         <input type="text" id="new-hint" placeholder="Notatka (np. po jedzeniu)">
         <select id="new-time">
@@ -306,7 +322,7 @@
             <option value="Obiad">Obiad</option>
             <option value="Przed snem">Przed snem</option>
         </select>
-        <div class="modal-btns">
+        <div style="display:flex; gap:10px; margin-top:15px">
             <button class="btn-main btn-cancel" onclick="closeModal()">Anuluj</button>
             <button class="btn-main btn-save" onclick="saveItem()">Zapisz</button>
         </div>
@@ -318,10 +334,10 @@
 </footer>
 
 <script>
-    // --- Zarządzanie danymi ---
     const STORAGE_KEY_LIST = 'vitakod_list_v3';
     const STORAGE_KEY_STATE = 'vitakod_state_v3';
     const STORAGE_KEY_DATE = 'vitakod_last_date_v3';
+    const STORAGE_KEY_THEME = 'vitakod_theme_pref';
 
     let supplements = [
         { id: '1', time: 'Na czczo', name: 'BPC-157 + KPV', hint: '30 min przed jedzeniem' },
@@ -338,13 +354,23 @@
     let checkedIds = [];
     let isEditMode = false;
 
-    // --- Logika główna ---
     function init() {
-        // Załaduj listę jeśli istnieje
+        // Theme init
+        const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'light') {
+            document.body.classList.remove('dark-mode');
+            document.getElementById('theme-icon').innerText = '☀️';
+        } else if (savedTheme === 'dark' || prefersDark) {
+            document.body.classList.add('dark-mode');
+            document.getElementById('theme-icon').innerText = '🌙';
+        }
+
+        // Data init
         const savedList = localStorage.getItem(STORAGE_KEY_LIST);
         if (savedList) supplements = JSON.parse(savedList);
 
-        // Sprawdzenie daty (auto-reset)
         const today = new Date().toLocaleDateString('pl-PL');
         const lastDate = localStorage.getItem(STORAGE_KEY_DATE);
         
@@ -361,16 +387,23 @@
         render();
     }
 
+    function toggleTheme() {
+        const isDark = document.body.classList.toggle('dark-mode');
+        localStorage.setItem(STORAGE_KEY_THEME, isDark ? 'dark' : 'light');
+        document.getElementById('theme-icon').innerText = isDark ? '🌙' : '☀️';
+        
+        // Update browser theme color
+        document.getElementById('theme-color-meta').setAttribute('content', isDark ? '#1A1A1A' : '#FDFBF7');
+    }
+
     function render() {
         const content = document.getElementById('app-content');
         content.innerHTML = '';
-        
         const times = ['Na czczo', 'Śniadanie', 'Południe', 'Obiad', 'Przed snem'];
         
         times.forEach(time => {
             const section = document.createElement('div');
             section.className = 'time-section';
-            
             const group = supplements.filter(s => s.time === time);
             
             let itemsHtml = group.map(item => {
@@ -398,8 +431,7 @@
         });
 
         updateProgress();
-        if (isEditMode) document.body.classList.add('edit-mode');
-        else document.body.classList.remove('edit-mode');
+        document.body.classList.toggle('edit-mode', isEditMode);
     }
 
     function toggleCheck(id) {
@@ -407,7 +439,6 @@
         const index = checkedIds.indexOf(id);
         if (index === -1) checkedIds.push(id);
         else checkedIds.splice(index, 1);
-        
         localStorage.setItem(STORAGE_KEY_STATE, JSON.stringify(checkedIds));
         render();
     }
@@ -419,10 +450,9 @@
         document.getElementById('progress-fill').style.width = percent + '%';
     }
 
-    // --- Akcje CRUD ---
     function toggleEditMode() {
         isEditMode = !isEditMode;
-        document.querySelector('.btn-edit-toggle').innerText = isEditMode ? 'Gotowe' : 'Edytuj';
+        document.getElementById('edit-btn').innerText = isEditMode ? 'Gotowe' : 'Edytuj';
         render();
     }
 
@@ -441,16 +471,9 @@
         const name = document.getElementById('new-name').value.trim();
         const hint = document.getElementById('new-hint').value.trim();
         const time = document.getElementById('new-time').value;
-
         if (!name) return;
 
-        const newItem = {
-            id: Date.now().toString(),
-            name,
-            hint,
-            time
-        };
-
+        const newItem = { id: Date.now().toString(), name, hint, time };
         supplements.push(newItem);
         localStorage.setItem(STORAGE_KEY_LIST, JSON.stringify(supplements));
         closeModal();
