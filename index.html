@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <!-- Tagi blokujące pamięć podręczną (Cache-Control) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>VITA-KOD 2.0 | Tomasz Wawrzak</title>
     
     <!-- PWA & Mobile Meta Tags -->
@@ -12,15 +18,14 @@
     <meta name="theme-color" content="#7F5539">
     <meta name="apple-mobile-web-app-title" content="VITA-KOD">
     
-    <!-- Inline Manifest -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"VITA-KOD 2.0","short_name":"VITA-KOD","description":"Plan suplementacji Tomasza Wawrzaka","start_url":".","display":"standalone","background_color":"#EDE0D4","theme_color":"#7F5539","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3004/3004458.png","sizes":"512x512","type":"image/png"}]}'>
+    <!-- Inline Manifest - Display Standalone ukrywa pasek adresu -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"VITA-KOD 2.0","short_name":"VITA-KOD","description":"Plan suplementacji Tomasza Wawrzaka","start_url":"index.html","display":"standalone","background_color":"#EDE0D4","theme_color":"#7F5539","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3004/3004458.png","sizes":"512x512","type":"image/png"}]}'>
 
     <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004458.png">
 
     <style>
         :root {
-            /* Paleta Autumn Harvest */
             --sky-fasting: #EDE0D4;
             --sky-breakfast: #E6CCB2;
             --sky-dinner: #DDB892;
@@ -28,7 +33,7 @@
             --accent: #4E342E; 
         }
         
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
@@ -36,12 +41,11 @@
             margin: 0; 
             padding: env(safe-area-inset-top) 10px env(safe-area-inset-bottom) 10px; 
             color: var(--accent); 
-            -webkit-tap-highlight-color: transparent;
         }
 
         .app-container { 
             max-width: 500px; 
-            margin: 20px auto; 
+            margin: 15px auto; 
             background: #fff; 
             border-radius: 35px; 
             overflow: hidden; 
@@ -75,25 +79,25 @@
             display: flex; 
             align-items: center; 
             border: 1px solid rgba(255,255,255,0.5);
-            transition: transform 0.1s;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
         }
-        .card:active { transform: scale(0.98); }
+        .card:active { transform: scale(0.96); opacity: 0.8; }
 
         .sleep .card { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.15); color: white; }
 
         input[type="checkbox"] { 
             width: 32px; 
             height: 32px; 
-            cursor: pointer; 
             margin-right: 15px; 
             accent-color: #7F5539; 
             flex-shrink: 0; 
-            border-radius: 8px;
         }
         
-        .info { flex: 1; }
-        .name { font-size: 16px; font-weight: 700; display: block; margin-bottom: 2px; }
-        .hint { font-size: 13px; opacity: 0.85; font-weight: 400; line-height: 1.4; display: block; }
+        .info { flex: 1; pointer-events: none; }
+        .name { font-size: 16px; font-weight: 700; display: block; }
+        .hint { font-size: 13px; opacity: 0.85; line-height: 1.4; display: block; }
 
         .warning-footer { 
             padding: 20px; 
@@ -110,11 +114,9 @@
             padding: 30px 20px; 
             font-size: 11px; 
             color: #A89081; 
-            line-height: 1.6; 
         }
         .signature { font-weight: bold; color: #7F5539; }
 
-        /* Styl dla trybu standalone - optymalizacja pod telefon */
         @media all and (display-mode: standalone) {
             body { padding: 0; background: #fff; }
             .app-container { border-radius: 0; box-shadow: none; margin: 0; min-height: 100vh; }
@@ -129,7 +131,6 @@
         <div id="date" class="date"></div>
     </header>
 
-    <!-- Sekcje pozostały bez zmian merytorycznych, poprawiono tylko dostępność -->
     <div class="time-block fasting">
         <div class="time-label"><span>💧</span> Na Czczo</div>
         <label class="card">
@@ -195,12 +196,13 @@
     <footer>
         Projekt i koncepcja: <span class="signature">Tomasz Wawrzak</span><br>
         Wsparcie merytoryczne i kod: <span class="signature">Gemini 2.5 Flash</span><br>
-        <i>System czyści się automatycznie każdego ranka.</i>
+        <i>Wersja: 2.1 (PWA Ready)</i>
     </footer>
 </div>
 
 <script>
-    // Automatyczne resetowanie i data
+    console.log("VITA-KOD 2.1 - Uruchomiono nową wersję");
+
     function updateApp() {
         const now = new Date();
         const todayStr = now.toLocaleDateString('pl-PL');
@@ -221,7 +223,6 @@
         }
     }
 
-    // Obsługa checkboxów
     const boxes = document.querySelectorAll('input[type="checkbox"]');
     boxes.forEach(b => {
         b.checked = localStorage.getItem(b.id) === 'true';
@@ -230,13 +231,13 @@
 
     updateApp();
 
-    // Prosty Service Worker (opcjonalny, pomaga w instalacji na Androidzie)
+    // Rejestracja SW dla instalacji PWA
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            const swCode = "self.addEventListener('fetch', function(event) {});";
+            const swCode = "self.addEventListener('install', (e) => self.skipWaiting()); self.addEventListener('fetch', (e) => {});";
             const blob = new Blob([swCode], {type: 'application/javascript'});
             const swUrl = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(swUrl).catch(err => console.log('SW registration skipped'));
+            navigator.serviceWorker.register(swUrl).catch(() => {});
         });
     }
 </script>
