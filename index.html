@@ -2,273 +2,551 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    
-    <!-- Anti-cache -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
-    <title>VITA-KOD 2.4 | Tomasz Wawrzak</title>
-    
-    <!-- PWA Meta -->
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FDFBF7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#7F5539">
-    <meta name="apple-mobile-web-app-title" content="VITA-KOD">
+    <meta name="description" content="VITA-KOD 2.5 - Twój osobisty tracker suplementacji">
     
-    <!-- Manifest -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"VITA-KOD 2.4","short_name":"VITA-KOD","description":"Indywidualny plan suplementacji","start_url":".","display":"standalone","background_color":"#EDE0D4","theme_color":"#7F5539","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3004/3004458.png","sizes":"512x512","type":"image/png"}]}'>
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3004/3004458.png">
+    <title>VITA-KOD 2.5</title>
+
+    <!-- Inline Web Manifest (Data URI) - Pozwala na instalację PWA bez zewnętrznego pliku -->
+    <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"VITA-KOD 2.5","short_name":"VitaKod","start_url":".","display":"standalone","background_color":"#FDFBF7","theme_color":"#FDFBF7","icons":[{"src":"https://picsum.photos/seed/vitakodicon/192/192","sizes":"192x192","type":"image/jpeg"}]}'>
+
+    <!-- Preconnect dla czcionek -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --sky-fasting: #EDE0D4;
-            --sky-breakfast: #E6CCB2;
-            --sky-afternoon: #E3D5CA;
-            --sky-dinner: #DDB892;
-            --sky-sleep: #7F5539;
-            --accent: #4E342E; 
-        }
-        
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background: #F8F9FA; 
-            margin: 0; 
-            padding: env(safe-area-inset-top) 10px env(safe-area-inset-bottom) 10px; 
-            color: var(--accent); 
+            /* Paleta barw: Ciepła, Ziemska */
+            --bg-color: #FDFBF7; /* Kremowy papier */
+            --card-bg: #FFFFFF;
+            --text-primary: #3E3228; /* Głęboki brąz */
+            --text-secondary: #8C7B70;
+            --accent-primary: #8D6E63; /* Ciepły brąz */
+            --accent-secondary: #D7CCC8; /* Jasny piaskowy */
+            --accent-success: #689F38; /* Oliwkowy zieleń */
+            --shadow-soft: 0 8px 24px rgba(62, 50, 40, 0.08);
+            --shadow-active: 0 4px 12px rgba(62, 50, 40, 0.12);
+            --radius-xl: 24px;
+            --radius-md: 16px;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
         }
 
-        .app-container { 
-            max-width: 500px; 
-            margin: 15px auto; 
-            background: #fff; 
-            border-radius: 35px; 
-            overflow: hidden; 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.08); 
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        
-        header { 
-            padding: 25px 20px; 
-            text-align: center; 
-            background: #fff; 
-            border-bottom: 2px solid #EDE0D4; 
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: calc(var(--safe-top) + 20px) 16px calc(var(--safe-bottom) + 80px);
+            min-height: 100vh;
+            /* Delikatna tekstura ziarna na tle */
+            background-image: radial-gradient(#D7CCC8 1px, transparent 1px);
+            background-size: 24px 24px;
         }
-        
-        h1 { margin: 0; font-size: 24px; color: #7F5539; letter-spacing: 1px; }
-        .date { font-size: 14px; font-weight: 700; color: #B08968; text-transform: uppercase; margin-top: 5px; }
 
-        .time-block { padding: 20px 15px; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .fasting { background-color: var(--sky-fasting); }
-        .breakfast { background-color: var(--sky-breakfast); }
-        .afternoon { background-color: var(--sky-afternoon); }
-        .dinner { background-color: var(--sky-dinner); }
-        .sleep { background-color: var(--sky-sleep); color: white; }
+        /* --- Header --- */
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+            position: relative;
+        }
 
-        .time-label { display: flex; align-items: center; font-size: 16px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; }
-        .time-label span { font-size: 22px; margin-right: 10px; }
+        h1 {
+            font-weight: 700;
+            font-size: 2rem;
+            margin: 0;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
 
-        .card { 
-            background: rgba(255, 255, 255, 0.7); 
-            border-radius: 18px; 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            display: flex; 
-            align-items: center; 
-            border: 1px solid rgba(255,255,255,0.5);
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        /* --- Progress Bar --- */
+        .progress-container {
+            margin-bottom: 30px;
+            background: var(--accent-secondary);
+            height: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-success));
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: right;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        /* --- Cards & Grid --- */
+        .supplements-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .time-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .time-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: -8px;
+            margin-left: 4px;
+        }
+
+        .time-icon {
+            font-size: 1.4rem;
+            background: var(--bg-color);
+            padding: 4px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .time-label {
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        /* --- Interactive Cards --- */
+        .supp-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            padding: 0;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.2s ease;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .supp-card:active {
+            transform: scale(0.98);
+            box-shadow: var(--shadow-active);
+        }
+
+        /* Checked State */
+        .supp-card.checked {
+            border-color: var(--accent-success);
+            background: #F1F8E9; /* Bardzo jasna zieleń */
+        }
+
+        .supp-card.checked .card-title {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .supp-card.checked .check-circle {
+            background-color: var(--accent-success);
+            border-color: var(--accent-success);
+        }
+
+        .supp-card.checked .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .card-content {
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-info {
+            flex: 1;
+            padding-right: 16px;
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            color: var(--text-primary);
+            transition: color 0.2s;
+        }
+
+        .card-hint {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            line-height: 1.3;
+        }
+
+        .hint-icon {
+            font-size: 0.9rem;
+        }
+
+        /* Custom Checkbox Circle */
+        .check-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-shrink: 0;
+        }
+
+        .check-icon {
+            color: white;
+            font-size: 1.2rem;
+            opacity: 0;
+            transform: scale(0.5);
             transition: all 0.2s;
         }
-        .card:last-child { margin-bottom: 0; }
-        .card:active { transform: scale(0.97); opacity: 0.9; }
 
-        .sleep .card { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.1); color: white; }
-
-        input[type="checkbox"] { 
-            width: 28px; 
-            height: 28px; 
-            margin-right: 15px; 
-            accent-color: #7F5539; 
-            flex-shrink: 0; 
+        /* --- Special Sections --- */
+        .fiber-warning {
+            margin-top: 40px;
+            background: #FFF3E0;
+            border-left: 4px solid #FF9800;
+            padding: 16px;
+            border-radius: var(--radius-md);
         }
-        
-        .info { flex: 1; pointer-events: none; }
-        .name { font-size: 15px; font-weight: 700; display: block; }
-        .hint { font-size: 12px; opacity: 0.85; line-height: 1.3; display: block; margin-top: 2px; }
 
-        .warning-footer { 
-            padding: 15px; 
-            background: #FFF9F5; 
-            border-top: 4px solid #DDB892; 
-            font-size: 12px; 
-            text-align: center; 
-            font-weight: 700; 
-            color: #7F5539; 
+        .fiber-warning h3 {
+            margin: 0 0 6px 0;
+            font-size: 0.95rem;
+            color: #E65100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fiber-warning p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #5D4037;
             line-height: 1.4;
         }
-        
-        footer { 
-            text-align: center; 
-            padding: 25px 20px; 
-            font-size: 10px; 
-            color: #A89081; 
-        }
-        .signature { font-weight: bold; color: #7F5539; }
 
-        @media all and (display-mode: standalone) {
-            body { padding: 0; background: #fff; }
-            .app-container { border-radius: 0; box-shadow: none; margin: 0; min-height: 100vh; }
+        /* --- Footer --- */
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            padding-bottom: 20px;
         }
+        
+        footer span {
+            font-weight: 600;
+        }
+
+        /* --- Reset Button (Admin) --- */
+        .reset-btn {
+            display: block;
+            margin: 20px auto 0;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            text-decoration: underline;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="app-container">
     <header>
-        <h1>🛡️ VITA-KOD 2.4</h1>
-        <div id="date" class="date"></div>
+        <h1>VITA-KOD 2.5</h1>
+        <div class="subtitle" id="date-display">Dziś: Ładowanie...</div>
     </header>
 
-    <!-- 1. NA CZCZO -->
-    <div class="time-block fasting">
-        <div class="time-label"><span>💧</span> Na Czczo</div>
-        <label class="card">
-            <input type="checkbox" id="c1">
-            <div class="info">
-                <span class="name">Peptydy: BPC-157 + KPV</span>
-                <span class="hint">30 min przed posiłkiem. Tylko woda.</span>
-            </div>
-        </label>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="progress-text" id="progress-text">0% Ukończono</div>
+
+    <main class="supplements-grid" id="app-container">
+        <!-- Content will be injected by JS -->
+    </main>
+
+    <div class="fiber-warning">
+        <h3>⚠️ Złota zasada błonnika</h3>
+        <p>Błonnik przyjmuj co najmniej 2h od innych suplementów. Pij wtedy dużo wody, aby nie zmniejszyć wchłanialności składników odżywczych.</p>
     </div>
 
-    <!-- 2. ŚNIADANIE -->
-    <div class="time-block breakfast">
-        <div class="time-label"><span>🍳</span> Śniadanie</div>
-        <label class="card">
-            <input type="checkbox" id="c2">
-            <div class="info">
-                <span class="name">B-Complex + NAC</span>
-                <span class="hint">Wsparcie procesów detoksykacji i energii.</span>
-            </div>
-        </label>
-        <label class="card">
-            <input type="checkbox" id="c_diosmin">
-            <div class="info">
-                <span class="name">Diosmina + Hesperydyna</span>
-                <span class="hint">Wsparcie naczyń krwionośnych (1 kapsułka).</span>
-            </div>
-        </label>
-        <label class="card">
-            <input type="checkbox" id="c_creatine">
-            <div class="info">
-                <span class="name">Monohydrat Kreatyny</span>
-                <span class="hint">3-5g dziennie. Wsparcie mięśni i mózgu.</span>
-            </div>
-        </label>
-    </div>
-
-    <!-- 3. POPOŁUDNIE - OPTYMALNY CZAS NA BŁONNIK -->
-    <div class="time-block afternoon">
-        <div class="time-label"><span>🍏</span> Popołudnie</div>
-        <label class="card">
-            <input type="checkbox" id="c_fiber">
-            <div class="info">
-                <span class="name">Błonnik (w proszku)</span>
-                <span class="hint">Wymieszać w 250ml wody + dodatkowa szklanka po.</span>
-            </div>
-        </label>
-    </div>
-
-    <!-- 4. OBIAD -->
-    <div class="time-block dinner">
-        <div class="time-label"><span>☀️</span> Obiad</div>
-        <label class="card">
-            <input type="checkbox" id="c3">
-            <div class="info">
-                <span class="name">Wapń + D3 + K2 + Kolagen</span>
-                <span class="hint">Wymaga posiłku z zawartością tłuszczu.</span>
-            </div>
-        </label>
-        <label class="card">
-            <input type="checkbox" id="c4">
-            <div class="info">
-                <span class="name">Omega-3 + Chrom</span>
-                <span class="hint">Serce i stabilny poziom cukru we krwi.</span>
-            </div>
-        </label>
-    </div>
-
-    <!-- 5. PRZED SNEM -->
-    <div class="time-block sleep">
-        <div class="time-label"><span>🌌</span> Przed Snem</div>
-        <label class="card">
-            <input type="checkbox" id="c5">
-            <div class="info">
-                <span class="name">Lit + Bor + Magnez</span>
-                <span class="hint">Wyciszenie i nocna regeneracja układu kostnego.</span>
-            </div>
-        </label>
-        <label class="card">
-            <input type="checkbox" id="c6">
-            <div class="info">
-                <span class="name">Glicyna (Napój)</span>
-                <span class="hint">Naturalne wsparcie głębokiego snu.</span>
-            </div>
-        </label>
-    </div>
-
-    <div class="warning-footer">
-        ZŁOTA ZASADA: Błonnik przyjmuj minimum 2h przed lub po innych suplementach. Bez dużej ilości wody błonnik nie zadziała!
-    </div>
+    <button class="reset-btn" onclick="app.resetData()">Resetuj dane testowe</button>
 
     <footer>
-        Koncepcja: <span class="signature">Tomasz Wawrzak</span><br>
-        Wsparcie merytoryczne: <span class="signature">Gemini 2.5 Flash</span><br>
-        <i>Wersja 2.4 | System czysty od marek handlowych</i>
+        Koncepcja: <span>Tomasz Wawrzak</span>
     </footer>
-</div>
 
-<script>
-    function updateApp() {
-        const now = new Date();
-        const todayStr = now.toLocaleDateString('pl-PL');
-        const lastDate = localStorage.getItem('last_visit_v24');
-        
-        document.getElementById('date').innerText = now.toLocaleDateString('pl-PL', { 
-            weekday: 'long', 
-            day: 'numeric', 
-            month: 'long' 
-        });
+    <script>
+        /**
+         * VITA-KOD 2.5 Logic
+         * Architektura: Vanilla JS ES6, Module Pattern
+         */
 
-        if (lastDate !== todayStr) {
-            document.querySelectorAll('input[type="checkbox"]').forEach(b => {
-                b.checked = false;
-                localStorage.setItem(b.id, false);
-            });
-            localStorage.setItem('last_visit_v24', todayStr);
+        const app = (() => {
+            // Konfiguracja suplementów
+            const supplementsData = [
+                {
+                    time: "Na Czczo",
+                    icon: "💧",
+                    items: [
+                        { id: "bpc", name: "Peptydy BPC-157 + KPV", hint: "30 min przed posiłkiem" }
+                    ]
+                },
+                {
+                    time: "Śniadanie",
+                    icon: "🍳",
+                    items: [
+                        { id: "bcomplex", name: "B-Complex + NAC", hint: "" },
+                        { id: "diosmina", name: "Diosmina + Hesperydyna", hint: "" },
+                        { id: "kreatyna", name: "Monohydrat Kreatyny", hint: "3-5g" }
+                    ]
+                },
+                {
+                    time: "Popołudnie",
+                    icon: "🍏",
+                    items: [
+                        { id: "blonnik", name: "Błonnik", hint: "Min. 2h odstępu od innych supli, dużo wody" }
+                    ]
+                },
+                {
+                    time: "Obiad",
+                    icon: "☀️",
+                    items: [
+                        { id: "wapniowit", name: "Wapń + D3 + K2 + Kolagen", hint: "Wymaga tłuszczu" },
+                        { id: "omega", name: "Omega-3 + Chrom", hint: "" }
+                    ]
+                },
+                {
+                    time: "Przed Snem",
+                    icon: "🌌",
+                    items: [
+                        { id: "mikro", name: "Lit + Bor + Magnez", hint: "" },
+                        { id: "glicyna", name: "Glicyna", hint: "Rozpuść w wodzie (napój)" }
+                    ]
+                }
+            ];
+
+            const STORAGE_KEY = 'vitaKodData_v2';
+            
+            // Elementy DOM
+            const container = document.getElementById('app-container');
+            const dateDisplay = document.getElementById('date-display');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+
+            // Stan aplikacji
+            let state = {
+                lastDate: null,
+                checkedIds: []
+            };
+
+            // Inicjalizacja
+            function init() {
+                loadData();
+                renderDate();
+                checkAutoReset();
+                render();
+                updateProgress();
+            }
+
+            // Formatowanie daty
+            function getTodayDateString() {
+                return new Date().toLocaleDateString('pl-PL', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+
+            function getSimpleDate() {
+                return new Date().toDateString();
+            }
+
+            function renderDate() {
+                const today = getTodayDateString();
+                // Zamieniamy pierwszą literę na wielką (dla polskich znaków locale string czasem daje małą)
+                dateDisplay.textContent = today.charAt(0).toUpperCase() + today.slice(1);
+            }
+
+            // Ładowanie danych
+            function loadData() {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    state = JSON.parse(raw);
+                }
+            }
+
+            // Zapisywanie danych
+            function saveData() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                updateProgress();
+            }
+
+            // Logika auto-resetu
+            function checkAutoReset() {
+                const today = getSimpleDate();
+                if (state.lastDate !== today) {
+                    // Nowy dzień - resetujemy checkboxy
+                    state.checkedIds = [];
+                    state.lastDate = today;
+                    saveData();
+                    console.log("VITA-KOD: Nowy dzień, zresetowano postęp.");
+                }
+            }
+
+            // Renderowanie interfejsu
+            function render() {
+                container.innerHTML = '';
+
+                supplementsData.forEach(group => {
+                    // Tworzymy sekcję dla grupy czasowej
+                    const groupSection = document.createElement('div');
+                    groupSection.className = 'time-group';
+
+                    // Nagłówek grupy
+                    const header = document.createElement('div');
+                    header.className = 'time-header';
+                    header.innerHTML = `
+                        <div class="time-icon">${group.icon}</div>
+                        <div class="time-label">${group.time}</div>
+                    `;
+                    groupSection.appendChild(header);
+
+                    // Karty z suplementami
+                    group.items.forEach(item => {
+                        const isChecked = state.checkedIds.includes(item.id);
+                        
+                        const card = document.createElement('div');
+                        card.className = `supp-card ${isChecked ? 'checked' : ''}`;
+                        card.onclick = () => toggleItem(item.id);
+                        card.setAttribute('role', 'button');
+                        
+                        // Budowanie HTML karty
+                        const hintHtml = item.hint 
+                            ? `<div class="card-hint"><span class="hint-icon">💡</span> ${item.hint}</div>` 
+                            : '';
+
+                        card.innerHTML = `
+                            <div class="card-content">
+                                <div class="card-info">
+                                    <h2 class="card-title">${item.name}</h2>
+                                    ${hintHtml}
+                                </div>
+                                <div class="check-circle">
+                                    <span class="check-icon">✓</span>
+                                </div>
+                            </div>
+                        `;
+                        groupSection.appendChild(card);
+                    });
+
+                    container.appendChild(groupSection);
+                });
+            }
+
+            // Przełączanie stanu checkboxa
+            function toggleItem(id) {
+                const index = state.checkedIds.indexOf(id);
+                if (index === -1) {
+                    state.checkedIds.push(id);
+                } else {
+                    state.checkedIds.splice(index, 1);
+                }
+                saveData();
+                render(); // Ponowne renderowanie w celu aktualizacji klas CSS
+            }
+
+            // Aktualizacja paska postępu
+            function updateProgress() {
+                // Obliczamy całkowitą liczbę wszystkich elementów (spłaszczona tablica)
+                const totalItems = supplementsData.reduce((acc, group) => acc + group.items.length, 0);
+                const completedItems = state.checkedIds.length;
+                
+                const percentage = Math.round((completedItems / totalItems) * 100);
+                
+                progressBar.style.width = `${percentage}%`;
+                progressText.textContent = `${percentage% 10 === 0 && percentage !== 100 ? percentage + '0' : percentage}% Ukończono`; // Estetyka
+
+                // Zmiana koloru paska przy 100%
+                if (percentage === 100) {
+                    progressText.textContent = "Świetna robota! 🌿";
+                    progressText.style.color = "var(--accent-success)";
+                } else {
+                    progressText.style.color = "var(--text-secondary)";
+                }
+            }
+
+            // Funkcja testowa do resetowania
+            function resetData() {
+                if(confirm("Czy na pewno chcesz usunąć cały postęp?")) {
+                    state.checkedIds = [];
+                    state.lastDate = null; // Wymusi reset przy kolejnym załadowaniu
+                    saveData();
+                    location.reload();
+                }
+            }
+
+            // Public API
+            return {
+                init,
+                resetData
+            };
+
+        })();
+
+        // Uruchomienie aplikacji po załadowaniu DOM
+        document.addEventListener('DOMContentLoaded', app.init);
+
+        // Obsługa Service Workera dla PWA (opcjonalna, ale dobra praktyka dla trybu offline w przyszłości)
+        if ('serviceWorker' in navigator) {
+            // W tym przykładzie nie używamy zewnętrznego pliku SW, ale struktura jest gotowa na rozbudowę.
+            console.log("VITA-KOD PWA: Service Worker support detected.");
         }
-    }
 
-    const boxes = document.querySelectorAll('input[type="checkbox"]');
-    boxes.forEach(b => {
-        b.checked = localStorage.getItem(b.id) === 'true';
-        b.onchange = () => localStorage.setItem(b.id, b.checked);
-    });
-
-    updateApp();
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            const swCode = "self.addEventListener('install', (e) => self.skipWaiting()); self.addEventListener('fetch', (e) => {});";
-            const blob = new Blob([swCode], {type: 'application/javascript'});
-            const swUrl = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(swUrl).catch(() => {});
-        });
-    }
-</script>
-
+    </script>
 </body>
 </html>
